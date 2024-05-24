@@ -16,8 +16,8 @@ function recordTemperature(temperature) {
   }
 
  // 前回の温度と現在の温度の比較をログに記録
-  response.push("前回の温度: " + lastTemperature);
-  response.push("現在の温度: " + temperature);
+  response.push(lastTemperature);
+  response.push(temperature);
   if (temperature > lastTemperature) {
     response.push("温度が上昇しました");
   } else if (temperature < lastTemperature) {
@@ -32,7 +32,8 @@ function recordTemperature(temperature) {
 function getLastTemperature() {
   const sheet = getSheet('temperature');
   const lastRow = sheet.getLastRow();
-  if (lastRow < 1) {
+  Logger.log(lastRow)
+  if (lastRow < 2) {
     return 0; // データが存在しない場合は 0 を返す（初回用）
   }
   const lastTemperature = sheet.getRange(lastRow, 2).getValue(); 

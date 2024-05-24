@@ -1,19 +1,82 @@
-const clientId = "your spotify clientId";
-const clientSecret = "your spoticy clientSecret";
-const authorization_code = "spotify Oauth code"
-const refresh_token = "spotify refresh token (get refresh tokenの関数で求めたものを利用)"
+function Playmusic(token, device, playlist){
+  url = "https://api.spotify.com/v1/me/player/play?device_id=" + device;
+    var body = {
+    "context_uri":  playlist,
+  };
+  var params = {
+    method : "put",
+    contentType : "application/json",
+    headers : {'Authorization': 'Bearer ' + token},
+    payload : JSON.stringify(body)
+  };
 
-function Spotify() {
-  //refresh_token = getRefreshToken() /* 最初に実行するときはauthorization_codeをrefresh_tokenと交換　*/ 
-  access_token = getAccessToken(refresh_token);
-  device = getDevice(access_token);
-  if(device == false){
-    console.log("Cannot find Available Device");
-    return false;
+   try { // get request
+      UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+      Logger.log('Fetch failed: ' + e.toString());
+      Logger.log("Cannot play music");
   }
-
-  temperature = SensorData();
-  playlist = getPlaylist(temperature);
-  playlist_url = playlist.split(":"); // playlist_urlを:で区別
-  return [access_token, temperature, device, playlist_url[2], playlist];
 }
+
+function getPlaylist(temperature){
+   var playlist = {
+    "spring": "spotify:playlist:37i9dQZF1DX6jhLZd8I8Wh",
+    "summer": "spotify:playlist:37i9dQZF1DWSUbEozh68df",
+    "autumn": "spotify:playlist:37i9dQZF1DWSNsgRcxy0mH",
+    "winter": "spotify:playlist:37i9dQZF1DWTZMm3WdVVwc",
+  };
+  if(temperature <= 10)
+    return playlist.winter;
+  else if(temperature <= 15)
+    return playlist.autumn;
+  else if(temperature <= 25)
+    return playlist.spring;
+  else 
+    return playlist.summer;
+}
+
+function stopMusic(token, deviceId){
+  url = "https://api.spotify.com/v1/me/player/pause?device_id=" + deviceId;
+  var params = {
+    method: "put",
+    headers : {'Authorization': 'Bearer ' + token}
+  };
+
+  try { // get request
+    UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+    Logger.log('Fetch failed: ' + e.toString());
+    Logger.log("Cannot stop music");
+  }
+}
+
+function playNext(token, deviceId){
+  url = "https://api.spotify.com/v1/me/player/next?device_id=" + deviceId;
+   var params = {
+    method: "post",
+    headers : {'Authorization': 'Bearer ' + token}
+  };
+
+  try { // get request
+    UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+    Logger.log('Fetch failed: ' + e.toString());
+    Logger.log("Cannot play next");
+  }
+}
+
+function playPrevious(token, deviceId){
+  url = "https://api.spotify.com/v1/me/player/previous?device_id=" + deviceId;
+  var params = {
+  method: "post",
+  headers : {'Authorization': 'Bearer ' + token}
+  };
+
+  try { // get request
+    UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+    Logger.log('Fetch failed: ' + e.toString());
+    Logger.log("Cannot play previous");
+  }
+}
+
