@@ -1,109 +1,105 @@
-function SpotifyFunction() {
-  var clientId = "your client id"
-  var clientSecret = "your client secret"
-
-  authorization_code = "your code "
-
-  var url = "https://accounts.spotify.com/api/token";
-  /*
-  var params = {
-    method: "post",
-    headers: { "Authorization": "Basic " + Utilities.base64Encode(clientId + ":" + clientSecret) },
-    payload: { grant_type: "authorization_code", code : authorization_code, redirect_uri: "your spotify redirect uri"},
-  };
-  console.log(UrlFetchApp.fetch(url, params).getContentText())
-  */
-  refresh_token = "Write your Refresh Token"
-
-  var params = {
-    method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded', "Authorization": "Basic " + Utilities.base64Encode(clientId + ":" + clientSecret)
-      },
-      payload : {
-        grant_type: 'refresh_token',
-        refresh_token: refresh_token,
-        
-      },
-  } 
-
-  var response = UrlFetchApp.fetch(url, params);
-  var access_token = JSON.parse(response.getContentText()).access_token;
-
-    device = getDevice(access_token)
-    if(device == false){
-      console.log("Cannot find Available Device")
-      return
-    }
-    device_id = "https://api.spotify.com/v1/me/player/play?device_id=" + device
-    tmp = SensorData()
-    playlist = getPlaylist(tmp)
+function Playmusic(token, device, playlist){
+  url = "https://api.spotify.com/v1/me/player/play?device_id=" + device;
     var body = {
-      "context_uri": playlist,
-    }
-    var p = {
-      method : "put",
-      contentType : "application/json",
-      headers : {'Authorization': 'Bearer ' + access_token},
-      payload : JSON.stringify(body)
-    };
-    UrlFetchApp.fetch(device_id, p)
-}
-
-function getDevice(token){
-  url = "https://api.spotify.com/v1/me/player/devices"
+    "context_uri":  playlist,
+  };
   var params = {
-    method : "get",
-    headers : {
-    'Authorization': 'Bearer ' + token,
-    "Content-Type" : "application/json;"},
-    };
-    device = JSON.parse(UrlFetchApp.fetch(url, params).getContentText()).devices
-    console.log(device)
-    if(Object.keys(device).length == 0)
-      return false
-    return JSON.parse(UrlFetchApp.fetch(url, params).getContentText()).devices[0].id
+    method : "put",
+    contentType : "application/json",
+    headers : {'Authorization': 'Bearer ' + token},
+    payload : JSON.stringify(body)
+  };
+
+   try { // get request
+      UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+      Logger.log('Fetch failed: ' + e.toString());
+      Logger.log("Cannot play music");
+  }
 }
 
 function getPlaylist(temperature){
-  var playlist = {
-    "spring": "spotify:playlist:6z6fhgl6T0S0Hpoa1HgUVp",
-    "summer": "spotify:playlist:2db8MQ07n0i3HqvHJquTZr",
-    "autumn": "spotify:playlist:4bg7Ot9mKUU5f6ZLOLnUME",
-    "winter": "spotify:playlist:7tedBOXy75Nm8XcXojLYV8",
-  }
+   var playlist = {
+    "spring": "spotify:playlist:37i9dQZF1DX6jhLZd8I8Wh",
+    "summer": "spotify:playlist:37i9dQZF1DWSUbEozh68df",
+    "autumn": "spotify:playlist:37i9dQZF1DWSNsgRcxy0mH",
+    "winter": "spotify:playlist:37i9dQZF1DWTZMm3WdVVwc",
+  };
   if(temperature <= 10)
-    return playlist.winter
+    return playlist.winter;
   else if(temperature <= 15)
-    return playlist.autumn
+    return playlist.autumn;
   else if(temperature <= 25)
-    return playlist.spring
+    return playlist.spring;
   else 
-    return playlist.summer
+    return playlist.summer;
 }
 
 function getcurrentPlaylist(token, playlist){
-  url = "https://api.spotify.com/v1/playlists/" + playlist
+  url = "https://api.spotify.com/v1/playlists/" + playlist;
   var params = {
     method : "get",
-    headers : {
+     headers : {
     'Authorization': 'Bearer ' + token,
     },
   };
-    
-    var response = UrlFetchApp.fetch(url, params)
-    var data = JSON.parse(response.getContentText());
-    
-    music_track = data.tracks.items;
-    lastSheetData = getLastData("{Sheet_name}");
-    for(let i = 0; i < music_track.length; i++){
-    minutes = music_track[i].track.duration_ms / 1000
-    minute = Math.floor(minutes / 60)
-    second = Math.floor(minutes % 60)
-    if(second < 10)
-      play_time = minute + ": 0" + second
-    else
-      play_time = minute + ": " + second
-    getSheet('Spotify').getRange(lastSheetData + i + 1, 1, 1, 4).setValues([[music_track[i].track.name, play_time, music_track[i].track.href, music_track[i].track.uri]])
-    }
+
+  try { // get request
+     response = UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+    Logger.log('Fetch failed: ' + e.toString());
+    Logger.log("Cannot get current playlist");
+    return;
+  }
+
+  var ls = [];
+  var data = JSON.parse(response.getContentText());
+  music_track = data.tracks.items;
+  recordCurrentPlaylist(music_track);
 }
+
+function stopMusic(token, deviceId){
+  url = "https://api.spotify.com/v1/me/player/pause?device_id=" + deviceId;
+  var params = {
+    method: "put",
+    headers : {'Authorization': 'Bearer ' + token}
+  };
+
+  try { // get request
+    UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+    Logger.log('Fetch failed: ' + e.toString());
+    Logger.log("Cannot stop music");
+  }
+}
+
+function playNext(token, deviceId){
+  url = "https://api.spotify.com/v1/me/player/next?device_id=" + deviceId;
+   var params = {
+    method: "post",
+    headers : {'Authorization': 'Bearer ' + token}
+  };
+
+  try { // get request
+    UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+    Logger.log('Fetch failed: ' + e.toString());
+    Logger.log("Cannot play next");
+  }
+}
+
+function playPrevious(token, deviceId){
+  url = "https://api.spotify.com/v1/me/player/previous?device_id=" + deviceId;
+  var params = {
+  method: "post",
+  headers : {'Authorization': 'Bearer ' + token}
+  };
+
+  try { // get request
+    UrlFetchApp.fetch(url, params);
+  } catch (e) { // error メッセージ表示
+    Logger.log('Fetch failed: ' + e.toString());
+    Logger.log("Cannot play previous");
+  }
+}
+
