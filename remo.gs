@@ -1,5 +1,5 @@
 function getNatureRemoData(endpoint) {
-  const REMO_ACCESS_TOKEN = "Nature Remo access token";
+  const REMO_ACCESS_TOKEN = "Write your Remo access token";
   const headers = {
     "Content-Type" : "application/json;",
     'Authorization': 'Bearer ' + REMO_ACCESS_TOKEN,
@@ -14,7 +14,7 @@ function getNatureRemoData(endpoint) {
     return JSON.parse(response);
   } catch (e) { // error メッセージ表示
     Logger.log('Fetch failed: ' + e.toString());
-    Logger.log("Cannot play music");
+    Logger.log("Cannot get remo device");
   }
 }
 
