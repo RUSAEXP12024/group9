@@ -1,5 +1,5 @@
 function createPlaylist(token) {
-  userId = "315u7hmofjrwgimbh4gwocfypszm";
+  userId = "your spotify user id";
   url = "https://api.spotify.com/v1/users/" + userId + "/playlists";
   var body = {
     "name": " Season Playlist",
