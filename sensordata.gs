@@ -25,14 +25,12 @@ function recordTemperature(temperature) {
   } else {
     response.push("温度は変わりませんでした");
   }
-  Logger.log(response);
   setSensorData(temperature, lastSensorData + 1, response);
 }
 
 function getLastTemperature() {
   const sheet = getSheet('temperature');
   const lastRow = sheet.getLastRow();
-  Logger.log(lastRow)
   if (lastRow < 2) {
     return 0; // データが存在しない場合は 0 を返す（初回用）
   }

@@ -1,5 +1,5 @@
 function getNatureRemoData(endpoint) {
-  const REMO_ACCESS_TOKEN = "Write your Remo access token";
+  const REMO_ACCESS_TOKEN = "your nature remo access token";
   const headers = {
     "Content-Type" : "application/json;",
     'Authorization': 'Bearer ' + REMO_ACCESS_TOKEN,

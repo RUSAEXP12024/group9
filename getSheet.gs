@@ -1,5 +1,5 @@
 function getSheet(name) {
-  const SPREADSHEET_ID = "your spread sheet id";
+  const SPREADSHEET_ID = "your spread sheet Id";
   const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = spreadsheet.getSheetByName(name);
 

@@ -14,7 +14,7 @@ function main() {
   
   recordTemperature(temperature);
   input = user_input();
- 
+
   switch(input[0]){
     case 1:
       Playmusic(token, device, playlist);

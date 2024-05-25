@@ -52,7 +52,6 @@ function getAudioFeatures(trackId, token) {
 
   try { // get request
     result = JSON.parse(UrlFetchApp.fetch(url, params).getContentText());  
-    Logger.log(result)
   } catch (e) { // error メッセージ表示
     Logger.log('Fetch failed: ' + e.toString());
     Logger.log("Cannot get audio features");

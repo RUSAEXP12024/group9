@@ -1,7 +1,8 @@
-const clientId = "your client id";
-const clientSecret = "your client secret";
-const authorization_code = "your authorization code"
-const refresh_token = "your refresh token "
+const clientId = "Your Spotify client Id";
+const clientSecret = "your Spotify Client secret";
+const authorization_code = "your spotify authorization code"
+const refresh_token = "your spotify refresh token"
+
 
 function Spotify() {
   //refresh_token = getRefreshToken() /* 最初に実行するときはauthorization_codeをrefresh_tokenと交換　*/ 
